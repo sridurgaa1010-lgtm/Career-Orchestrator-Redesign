@@ -93,8 +93,11 @@ function meMenu() {
   return wrap;
 }
 function drawChrome(r) {
-  chrome.classList.toggle("app-shell", r.layout === "app" && !!U.user);
   let inner;
+  const sidebarId = "app-sidebar";
+  const oldSidebar = document.getElementById(sidebarId);
+  if (oldSidebar) oldSidebar.remove();
+
   if (r.layout === "public" || !U.user) {
     inner = [brand(), h("nav", { class: "nav", "aria-label": "Main" }, link("#/features", T.pub.features), link("#/how", T.pub.how), link("#/shots", T.pub.shots)),
       h("div", { class: "grow" }), U.user ? meMenu() : h("a", { class: "btn small", href: "#/signin", text: T.pub.signin })];
@@ -102,7 +105,13 @@ function drawChrome(r) {
     inner = [brand(), h("div", { class: "grow" }), meMenu()];
   } else {
     const tabs = [["dashboard", T.nav.dashboard], ["roadmap", T.nav.roadmap], ["jobs", T.nav.jobs], ["courses", T.nav.courses], ["missions", T.nav.missions], ["certs", T.nav.certs]];
-    inner = [brand(), h("nav", { class: "nav", "aria-label": "Main" }, tabs.map(([k, t]) => link(`#/${k}`, t, r.tab === k))), h("div", { class: "grow" }), searchBox(), meMenu()];
+    const sidebar = h("aside", { id: sidebarId, class: "app-sidebar", "aria-label": "Workspace navigation" },
+      h("div", { class: "sidebar-kicker", text: "WORKSPACE" }),
+      h("nav", { class: "sidebar-nav", "aria-label": "Workspace" }, tabs.map(([k, t]) => link(`#/${k}`, t, r.tab === k))),
+      h("div", { class: "sidebar-foot" }, h("span", { class: "sidebar-dot" }), h("span", { text: "Career journey workspace" }))
+    );
+    document.body.insertBefore(sidebar, main);
+    inner = [brand(), h("div", { class: "top-context", text: "Career development workspace" }), h("div", { class: "grow" }), searchBox(), meMenu()];
   }
   chrome.replaceChildren(h("div", { class: "top-in" }, inner));
 }
