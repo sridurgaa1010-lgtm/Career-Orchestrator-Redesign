@@ -93,6 +93,7 @@ function meMenu() {
   return wrap;
 }
 function drawChrome(r) {
+  chrome.classList.toggle("app-shell", r.layout === "app" && !!U.user);
   let inner;
   if (r.layout === "public" || !U.user) {
     inner = [brand(), h("nav", { class: "nav", "aria-label": "Main" }, link("#/features", T.pub.features), link("#/how", T.pub.how), link("#/shots", T.pub.shots)),
